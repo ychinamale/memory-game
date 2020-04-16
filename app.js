@@ -2,6 +2,7 @@
     Extension:
     - Add better styling
     - Slap react on it
+		- Consider animations? https://reactjs.org/docs/faq-styling.html
     - Slap ElectronJs
     - Get random images from unsplash
         - Consider CDN e.g. cloudinary, cloudflare
