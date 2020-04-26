@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card } from './Card';
 
 const boardImages  = {
@@ -11,54 +11,97 @@ const boardImages  = {
     "pizza"     : "images/pizza.jpg"
 }
 
-const matchList = [ "burger", "fries", "hotdog", "icecream", "milkshake", "pizza" ];
+const cardNames = [ "burger", "fries", "hotdog", "icecream", "milkshake", "pizza" ];
 
-/*
+export function Board () {
 
+    const [ cards, setCards ] = useState([]);
+    const [ chosen, setChosen ] = useState([]);
+    const [ matches, setMatches ] = useState([]);
+    const [ disabled, setDisabled ] = useState(false);
 
-*/
+    useEffect(() => {
+        setCards(randomizeList(createPairs(cardNames)));
+    }, []);
 
+    useEffect(() => {
+        console.log('Chosen is now',chosen);
 
-export class Board extends React.Component {
-    constructor (props) {
-        super (props);
-
-        this.state = {
-            chosen_ids: [],
-            chosen_images: [],
-            matchesFound: 0
-        }
-
-        this.handleFlip = this.handleFlip.bind(this);
-    }
-
-    handleFlip (id, image) {
-        if (chosen_ids.length > 1){
+        if ( chosen.length > 1 ){
             if(isMatch()){
-                this.setState(({ matchesFound })=>({
-                    matchesFound: matchesFound + 2
-                }))
+                setMatches([ ...matches, ...chosen])
             } else {
-                this.setState({
-                    chosen_ids: [],
-                    chosen_images: []
-                })
+                setDisabled(true);
             }
         }
+    }, [chosen]);
+
+    useEffect(()=> {
+        setTimeout(() => {
+            setChosen([]);
+            setDisabled(false);
+        }, 900);
+    }, [disabled]);
+
+    useEffect(() => {
+        console.log('Matches are now',matches)
+        setChosen([])
+    }, [matches]);
+
+    const isMatch = () => boardImages[ cards[chosen[0]]] === boardImages[ cards[chosen[1]]];
+
+    const randomizeList = (thisList) => thisList.sort(() => 0.5 - Math.random());
+
+    const createPairs = (thisList) => {
+        return thisList.reduce((acc, item)=>{
+            acc.push(item)
+            acc.push(item)
+            return acc
+        }, [])
     }
 
-    render() {
-        const { chosen_ids } = this.state;
-        return (
-            <React.Fragment>
-                { matchList.map((imageName, index)=> {
-                    if (chosen_ids.includes(index)) {
-                        return <Card key={`${imageName}-${index}`} id={index} show={true} />
-                    }
-                    
-                    return <Card key={`${imageName}-${index}`} id={index} show={false} />
-                })}
-            </React.Fragment>
-        )
+    const handleFlip = (index) => {
+        setChosen([ ...chosen, index]);
     }
+
+    function checkMatch () {
+        console.log('checkmatch called');
+    }
+
+    function resetBoard () {
+        setChosen([]);
+        setMatches([]);
+        setCards(randomizeList(createPairs(cardNames)));
+    }
+
+    return (
+        <div>
+            <button onClick={()=> resetBoard()}>Reset Board</button>
+            <div className='grid'>
+                { cards.map((cardName, index)=> {
+                    
+                    var isFlipped = (chosen.includes(index) || matches.includes(index));
+
+                    var showImage = isFlipped
+                        ? boardImages[ cards[index] ]
+                        : boardImages[ 'unflipped' ];
+
+                    return (
+                        <Card
+                            key={`${cardName}-${index}`}
+                            id={index}
+                            flipped={ isFlipped }
+                            image={ showImage }
+                            width={100}
+                            height={100}
+                            onFlip={ isFlipped || disabled ? 
+                                () => console.log('Wise guy -_-') :
+                                (card_id) => handleFlip(card_id) 
+                            }
+                        />
+                    );
+                })}
+            </div>
+        </div>
+    )
 }

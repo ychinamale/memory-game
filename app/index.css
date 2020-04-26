@@ -1,0 +1,43 @@
+.grid{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    height: 310px;
+    width: 410px;
+}
+
+.flip-container {
+    perspective: 1000px;
+    display: inline-block;
+    border: 1px solid white;
+    background: white;
+}
+  
+.flip-container.flipped .flipper{
+    transform: rotateY(180deg);
+}
+
+.flipper {
+    transition: transform ease 500ms;
+    transition: -webkit-transform ease 500ms;
+    transform-style: preserve-3d;
+}
+
+
+.front,
+.back {
+    position: absolute;
+    left: 0;
+    top: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+.back {
+    z-index: 2;
+    transform: rotateY(0deg);
+}
+
+.front {
+    transform: rotateY(-180deg);
+}
