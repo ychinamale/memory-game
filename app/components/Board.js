@@ -25,8 +25,6 @@ export function Board () {
     }, []);
 
     useEffect(() => {
-        console.log('Chosen is now',chosen);
-
         if ( chosen.length > 1 ){
             if(isMatch()){
                 setMatches([ ...matches, ...chosen])
@@ -44,7 +42,6 @@ export function Board () {
     }, [disabled]);
 
     useEffect(() => {
-        console.log('Matches are now',matches)
         setChosen([])
     }, [matches]);
 
@@ -62,10 +59,6 @@ export function Board () {
 
     const handleFlip = (index) => {
         setChosen([ ...chosen, index]);
-    }
-
-    function checkMatch () {
-        console.log('checkmatch called');
     }
 
     function resetBoard () {
